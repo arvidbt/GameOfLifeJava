@@ -5,11 +5,11 @@ import java.util.Random;
 
 public class GameOfLife {
 
-    private static final int  rows = 50;
-    private static final int  cols = 50;
+    private int rows;
+    private int cols;
 
-    public JButton[][] panels = new JButton[rows][cols];
-    public int[][] grid = new int[rows][cols];
+    public JButton[][] panels;
+    public int[][] grid;
     public JFrame gameFrame = new JFrame();
     public JPanel gameBoard = new JPanel();
     public JPanel menuPanel = new JPanel();
@@ -23,21 +23,31 @@ public class GameOfLife {
     public static void main(String[] args) {
         new GameOfLife();
     }
-    //TODO
-    // Buttons for information -> popup window?
-    // JTextfield for rows and cols.
-
 
     GameOfLife() {
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameFrame.setSize(1080, 1160);
         gameFrame.setLayout(null);
-        gameFrame.setTitle("Game of Life");
-        gameBoard.setLayout(new GridLayout(rows,cols));
+        gameFrame.setTitle("Conway's Game of Life");
         menuPanel.setBounds(0,0,1080,80);
         gameBoard.setBounds(0,45,1080,1080);
         gameBoard.setBackground(Color.DARK_GRAY);
         menuPanel.setBackground(Color.DARK_GRAY);
+
+        try {
+            int xyDim = setSquareDimensions();
+            rows = xyDim;
+            cols = xyDim;
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(gameBoard, "You must enter a dimension for the gameboard!");
+            int xyDim = setSquareDimensions();
+            rows = xyDim;
+            cols = xyDim;
+        }
+
+        panels = new JButton[rows][cols];
+        grid = new int[rows][cols];
+        gameBoard.setLayout(new GridLayout(rows,cols));
 
         addButtonsToPanel();
         setButtonColor();
@@ -75,6 +85,10 @@ public class GameOfLife {
         randomGen.addActionListener(e->createRandomPattern());
         clear.addActionListener(e->clearBoard());
         nextGen.addActionListener(e->nextGeneration());
+    }
+
+    private int setSquareDimensions() {
+        return Integer.parseInt(JOptionPane.showInputDialog(gameBoard, "Set dimensions for board."));
     }
 
     private void initBoard() {
@@ -137,7 +151,7 @@ public class GameOfLife {
     }
 
     private void nextGeneration() {
-        int[][] nextGen = new int[100][100];
+        int[][] nextGen = new int[rows][cols];
         for(int r = 1; r < rows -1; r++) {
             for (int c = 1; c < cols -1; c++) {
                 int numNB = 0;
